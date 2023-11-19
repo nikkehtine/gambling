@@ -1,9 +1,55 @@
-// use rand::Rng;
+use phf::phf_map;
+use rand::seq::SliceRandom;
+use rand::{thread_rng, Rng};
 use std::io;
 
 const MAX_LINES: u32 = 3;
 const MAX_BET: u32 = 100;
 const MIN_BET: u32 = 2;
+
+const ROWS: u32 = 3;
+const COLS: u32 = 3;
+
+const SYMBOL_COUNT: phf::Map<&'static str, u32> = phf_map! {
+    "A" => 2,
+    "B" => 4,
+    "C" => 6,
+    "D" => 8,
+};
+
+pub fn get_slot_machine_spin(rows: u32, cols: u32, symbols: phf::Map<&str, u32>) -> Vec<Vec<&str>> {
+    let mut all_symbols: Vec<&str> = Vec::new();
+    for (symbol, symbol_count) in &symbols {
+        for _ in 0..*symbol_count {
+            all_symbols.push(*symbol);
+        }
+    }
+
+    let mut columns: Vec<Vec<&str>> = Vec::new();
+    for _ in 0..cols {
+        let mut column: Vec<&str> = Vec::new();
+        let mut current_symbols: Vec<&str> = all_symbols.clone();
+        for _ in 0..rows {
+            let random_value =
+                current_symbols.remove(thread_rng().gen_range(0..current_symbols.len()));
+            column.push(random_value);
+        }
+        columns.push(column);
+    }
+    return columns;
+}
+
+pub fn print_slot_machine(columns: Vec<Vec<&str>>) {
+    for row in 0..columns[0].len() {
+        for (i, column) in columns.iter().enumerate() {
+            print!("{}", column[row]);
+            if i != columns[0].len() {
+                print!("|");
+            }
+            print!("\n");
+        }
+    }
+}
 
 pub fn deposit() -> u32 {
     loop {
