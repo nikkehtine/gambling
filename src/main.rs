@@ -21,4 +21,7 @@ fn main() {
     }
 
     println!("You are betting ${bet} on {lines} lines. Total bet is ${total_bet}.");
+
+    let slots = gambling::get_slot_machine_spin();
+    gambling::print_slot_machine(slots);
 }
