@@ -15,6 +15,34 @@ const SYMBOL_COUNT: phf::Map<&'static str, u32> = phf_map! {
     "C" => 6,
     "D" => 8,
 };
+const SYMBOL_VALUE: phf::Map<&'static str, u32> = phf_map! {
+    "A" => 5,
+    "B" => 4,
+    "C" => 3,
+    "D" => 2,
+};
+
+pub fn check_winnings(columns: &Vec<Vec<&str>>, lines: u32, bet: u32) -> (u32, Vec<u32>) {
+    let mut winnings: u32 = 0;
+    let mut winning_lines: Vec<u32> = Vec::new();
+    for line in 0..lines {
+        let symbol = columns[0][line as usize];
+        let mut mismatch: bool = false;
+
+        for column in columns {
+            let symbol_to_check = column[line as usize];
+            if &symbol != &symbol_to_check {
+                mismatch = true;
+                break;
+            }
+        }
+        if !mismatch {
+            winnings += SYMBOL_VALUE[&symbol] * &bet;
+            winning_lines.push(line + 1);
+        }
+    }
+    return (winnings, winning_lines);
+}
 
 pub fn get_slot_machine_spin() -> Vec<Vec<&'static str>> {
     let mut all_symbols: Vec<&str> = Vec::new();
@@ -38,7 +66,7 @@ pub fn get_slot_machine_spin() -> Vec<Vec<&'static str>> {
     return columns;
 }
 
-pub fn print_slot_machine(columns: Vec<Vec<&str>>) {
+pub fn print_slot_machine(columns: &Vec<Vec<&str>>) {
     println!();
     for row in 0..columns[0].len() {
         for (i, column) in columns.iter().enumerate() {
